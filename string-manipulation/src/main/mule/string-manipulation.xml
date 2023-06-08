@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="afdbc36f-47d2-42cc-ae73-a6f1d7ab67b2" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="string-toUpperCase" doc:id="4b579aef-bdad-40e7-9542-30e522182d1c">
+		<http:listener doc:name="Listener" doc:id="469dde28-d987-4803-9aaf-aa4ac573044d" config-ref="HTTP_Listener_config" path="/toUpperCase" />
+		<logger level="INFO" doc:name="Starts" doc:id="d3a05128-0e0f-4549-ac53-d7b6acdacc62" message="Upper case starts" />
+		<ee:transform doc:name="ToUpperCase" doc:id="98bc0298-b8be-4c11-9a55-71c84ac2e843">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+import java!stringmanipulation::StringManipulation
+---
+{
+	"UpperCase": StringManipulation::toUpperCase(payload.in)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Ends" doc:id="fa3476a5-9327-49d6-904f-de7be4718446" message="Upper case ends" />
+	</flow>
+</mule>

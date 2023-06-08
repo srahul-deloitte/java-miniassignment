@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="string-toLowerCaseFlow" doc:id="58454b15-b9f5-412d-af60-cd3c0085b2ff" >
+		<http:listener doc:name="Listener" doc:id="902ecf48-3f81-46e7-b12b-a67c4a4bbada" config-ref="HTTP_Listener_config" path="/toLowerCase"/>
+		<logger level="INFO" doc:name="Starts" doc:id="ae1ffba2-f5ee-4b91-9f72-8c32a3f40dd2" message="To lowercase starts"/>
+		<ee:transform doc:name="To LowerCase" doc:id="bd0382d6-5495-49d0-b7f7-54887799b78e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import java!stringmanipulation::StringManipulation
+---
+{
+	"LowerCase": StringManipulation::toLowerCase(payload.in)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Ends" doc:id="78f8e94b-9934-4f37-802f-86e907070095" message="To lowercase ends"/>
+	</flow>
+</mule>

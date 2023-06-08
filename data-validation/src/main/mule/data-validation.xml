@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2598b6b1-32ee-4f83-87bf-a3ee47e8d04b" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="data-validationFlow" doc:id="90d472c0-54a8-4118-8a50-43f69c2b1e55" >
+		<http:listener doc:name="Listener" doc:id="50877d85-c2a1-4d17-98d3-edb04b26c1d1" config-ref="HTTP_Listener_config" path="/data"/>
+		<logger level="INFO" doc:name="Starts" doc:id="de3594d1-76d3-47a9-91a5-9e812c00fab3" message="Starting of email validation "/>
+		<java:invoke-static doc:name="Invoke static" doc:id="017402cc-44a0-415b-b6a1-6f429a38996b" class="datavalidation.DataValidation" method="isValid(java.lang.String,java.lang.String,java.lang.String)">
+			<java:args ><![CDATA[#[{
+	email: payload.email,
+	phno: payload.phno,
+	credno: payload.credno
+}]]]></java:args>
+		</java:invoke-static>
+		<ee:transform doc:name="Transform Message" doc:id="65f1b91e-efbc-44cf-aceb-12c95d152630" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End" doc:id="497ab800-6f49-41b8-8ad2-9c38fc0bf929" message="Ending of email validation"/>
+	</flow>
+</mule>
